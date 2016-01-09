@@ -1,0 +1,8 @@
+## Interface: 60200
+## Title: AutoLootNode
+## Author: phyber
+## Notes: Automatically loot various nodes.
+## Version: @project-version@
+## X-Category: Interface Enhancements
+
+AutoLootNode.lua
