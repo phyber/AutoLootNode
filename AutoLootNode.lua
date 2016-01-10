@@ -47,6 +47,8 @@ local function isUnitLootableNode(tooltip)
 		return false
 	end
 
+	-- Search through left hand of the tooltip, checking for profession
+	-- lines.
 	for n=1, tooltip:NumLines() do
 		local tooltipLineLeft = _G["GameTooltipTextLeft"..n]
 		if tooltipLineLeft then
@@ -56,6 +58,7 @@ local function isUnitLootableNode(tooltip)
 			end
 		end
 	end
+
 	return false
 end
 
@@ -82,28 +85,40 @@ local function DisableAutoLoot()
 	end
 end
 
-local function DisableAutoLootTimer()
+local function StartDisableAutoLootTimer()
+	-- If we toggled auto-loot on, start a timer to disable it.
 	if autoLootToggled then
 		autoLootDisableTimer = NewTimer(1, DisableAutoLoot)
 	end
 end
 
-local function EnableAutoLoot(tooltip, ...)
+local function KillTimer()
+	-- If a timer exists and wasn't yet cancelled, cancel it.
 	if autoLootDisableTimer and not autoLootDisableTimer._cancelled then
-		-- Gone into a new tooltip before our previous timer fired.
-		-- Cancel it and disable autoloot.
 		autoLootDisableTimer:Cancel()
-		DisableAutoLoot()
 	end
+end
 
+local function EnableAutoLoot(tooltip, ...)
 	if isLootableNode(tooltip) then
+		-- Gone into a new tooltip before our previous timer
+		-- fired.
+		-- Cancel it and disable autoloot.
+		KillTimer()
+		DisableAutoLoot()
+
 		-- We don't want to trample over chars with AutoLoot enabled.
 		if not GetCVarBool(CVAR_AUTOLOOT) then
 			autoLootToggled = true
 			SetCVar(CVAR_AUTOLOOT, AUTOLOOT_ON)
 		end
+	else
+		-- New tooltip that we can't loot. Disable timer and autoloot
+		-- right away.
+		KillTimer()
+		DisableAutoLoot()
 	end
 end
 
 GameTooltip:HookScript("OnShow", EnableAutoLoot)
-GameTooltip:HookScript("OnHide", DisableAutoLootTimer)
+GameTooltip:HookScript("OnHide", StartDisableAutoLootTimer)
