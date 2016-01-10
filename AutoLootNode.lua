@@ -85,7 +85,7 @@ local function DisableAutoLoot()
 	end
 end
 
-local function StartDisableAutoLootTimer()
+local function OnHide()
 	-- If we toggled auto-loot on, start a timer to disable it.
 	if autoLootToggled then
 		autoLootDisableTimer = NewTimer(1, DisableAutoLoot)
@@ -99,7 +99,7 @@ local function KillTimer()
 	end
 end
 
-local function EnableAutoLoot(tooltip, ...)
+local function OnShow(tooltip, ...)
 	if isLootableNode(tooltip) then
 		-- Gone into a new tooltip before our previous timer
 		-- fired.
@@ -120,5 +120,5 @@ local function EnableAutoLoot(tooltip, ...)
 	end
 end
 
-GameTooltip:HookScript("OnShow", EnableAutoLoot)
-GameTooltip:HookScript("OnHide", StartDisableAutoLootTimer)
+GameTooltip:HookScript("OnShow", OnShow)
+GameTooltip:HookScript("OnHide", OnHide)
