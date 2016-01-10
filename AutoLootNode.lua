@@ -92,7 +92,7 @@ local function OnHide()
 	end
 end
 
-local function KillTimer()
+local function CancelTimer()
 	-- If a timer exists and wasn't yet cancelled, cancel it.
 	if autoLootDisableTimer and not autoLootDisableTimer._cancelled then
 		autoLootDisableTimer:Cancel()
@@ -104,7 +104,7 @@ local function OnShow(tooltip, ...)
 		-- Gone into a new tooltip before our previous timer
 		-- fired.
 		-- Cancel it and disable autoloot.
-		KillTimer()
+		CancelTimer()
 		DisableAutoLoot()
 
 		-- We don't want to trample over chars with AutoLoot enabled.
@@ -115,7 +115,7 @@ local function OnShow(tooltip, ...)
 	else
 		-- New tooltip that we can't loot. Disable timer and autoloot
 		-- right away.
-		KillTimer()
+		CancelTimer()
 		DisableAutoLoot()
 	end
 end
