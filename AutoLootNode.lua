@@ -92,6 +92,17 @@ local function DisableAutoLoot()
 	end
 end
 
+--[[
+-- When the tooltip is hidden, we cannot disable autoloot right away. Due to
+-- latency issues, it's entirely possible to disable autoloot before the loot
+-- event starts on the client, meaning that a node/enemy would end up not being
+-- autolooted.
+-- It is also possible that when right clicking on a node that the tooltip
+-- is hidden for a moment due to the cursor disappearing. This too can interfer
+-- with autolooting.
+--
+-- To work around this, we start a timer that disables autoloot after 1 second.
+--]]
 local function OnHide()
 	-- If we toggled auto-loot on, start a timer to disable it.
 	if autoLootToggled then
@@ -101,9 +112,8 @@ end
 
 local function OnShow(tooltip, ...)
 	if isLootableNode(tooltip) then
-		-- Gone into a new tooltip before our previous timer
-		-- fired.
-		-- Cancel it and disable autoloot.
+		-- We might have entered a new tooltip before the previous
+		-- timer expired, so we cancel timer and disable autoloot.
 		CancelTimer()
 		DisableAutoLoot()
 
