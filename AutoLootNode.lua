@@ -77,6 +77,13 @@ local function isLootableNode(tooltip)
 	return false
 end
 
+local function CancelTimer()
+	-- If a timer exists and wasn't yet cancelled, cancel it.
+	if autoLootDisableTimer and not autoLootDisableTimer._cancelled then
+		autoLootDisableTimer:Cancel()
+	end
+end
+
 local function DisableAutoLoot()
 	-- Only disable it if we turned it on in the first place.
 	if autoLootToggled then
@@ -89,13 +96,6 @@ local function OnHide()
 	-- If we toggled auto-loot on, start a timer to disable it.
 	if autoLootToggled then
 		autoLootDisableTimer = NewTimer(1, DisableAutoLoot)
-	end
-end
-
-local function CancelTimer()
-	-- If a timer exists and wasn't yet cancelled, cancel it.
-	if autoLootDisableTimer and not autoLootDisableTimer._cancelled then
-		autoLootDisableTimer:Cancel()
 	end
 end
 
