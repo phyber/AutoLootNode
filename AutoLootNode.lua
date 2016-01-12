@@ -1,4 +1,5 @@
 local GameTooltipTextLeft2 = GameTooltipTextLeft2
+local GetModifiedClick = GetModifiedClick
 local GetSpellInfo = GetSpellInfo
 local GetItemInfo = GetItemInfo
 local GetCVarBool = GetCVarBool
@@ -28,6 +29,25 @@ local validAutoLootUnit = {
 	[UNIT_SKINNABLE_LEATHER] = true,
 	[UNIT_SKINNABLE_ROCK] = true,
 }
+
+-- Checks to see if the auto loot modifier is held.
+local function isAutoLootModifierHeld()
+	local autoLootKey = GetModifiedClick("AUTOLOOTTOGGLE")
+
+	if autoLootKey == "ALT" then
+		return IsAltKeyDown()
+	end
+
+	if autoLootKey == "CTRL" then
+		return IsControlKeyDown()
+	end
+
+	if autoLootKey == "SHIFT" then
+		return IsShiftKeyDown()
+	end
+
+	return false
+end
 
 -- Checks for profession type on 2nd line.
 local function isProfessionNode(tooltip)
@@ -116,6 +136,14 @@ local function OnShow(tooltip, ...)
 		-- timer expired, so we cancel timer and disable autoloot.
 		CancelTimer()
 		DisableAutoLoot()
+
+		-- If we have the auto loot modifier held, do nothing.
+		-- We do this after the above in case we already had a timer
+		-- going when we went into a new tooltip with the modifier
+		-- held.
+		if isAutoLootModifierHeld() then
+			return
+		end
 
 		-- We don't want to trample over chars with AutoLoot enabled.
 		if not GetCVarBool(CVAR_AUTOLOOT) then
