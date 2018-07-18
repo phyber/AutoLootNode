@@ -1,4 +1,4 @@
-## Interface: 60200
+## Interface: 80000
 ## Title: AutoLootNode
 ## Author: phyber
 ## Notes: Automatically loot various nodes.
