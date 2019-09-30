@@ -1,4 +1,4 @@
-## Interface: 80205-1
+## Interface: 80205
 ## Title: AutoLootNode
 ## Author: phyber
 ## Notes: Automatically loot various nodes.
